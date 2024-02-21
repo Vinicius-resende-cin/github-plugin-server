@@ -1,5 +1,5 @@
 import fs from "fs";
-import { AnalysisOutput } from "../models/AnalysisOutput";
+import { AnalysisOutput, analysisMatches } from "../models/AnalysisOutput";
 
 interface AnalysisOutputRepository {
   getAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<AnalysisOutput | null>;
@@ -21,7 +21,9 @@ class AnalysisOutputFileRepository implements AnalysisOutputRepository {
 
   async getAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<AnalysisOutput | null> {
     return (
-      this.analysisOutputs.find((analysisOutput) => analysisOutput.matches(owner, repo, pull_number)) || null
+      this.analysisOutputs.find((analysisOutput) =>
+        analysisMatches(analysisOutput, owner, repo, pull_number)
+      ) || null
     );
   }
 
@@ -42,7 +44,8 @@ class AnalysisOutputFileRepository implements AnalysisOutputRepository {
 
   async updateAnalysisOutput(newAnalysisOutput: AnalysisOutput): Promise<AnalysisOutput> {
     const index = this.analysisOutputs.findIndex((analysisOutput) =>
-      analysisOutput.matches(
+      analysisMatches(
+        analysisOutput,
         newAnalysisOutput.owner,
         newAnalysisOutput.repository,
         newAnalysisOutput.pull_number
@@ -56,16 +59,16 @@ class AnalysisOutputFileRepository implements AnalysisOutputRepository {
 
   async deleteAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<void> {
     this.analysisOutputs = this.analysisOutputs.filter(
-      (analysisOutput) => !analysisOutput.matches(owner, repo, pull_number)
+      (analysisOutput) => !analysisMatches(analysisOutput, owner, repo, pull_number)
     );
   }
 
   async listAllAnalysisFromRepo(repo: string, owner: string): Promise<AnalysisOutput[]> {
-    return this.analysisOutputs.filter((analysisOutput) => analysisOutput.matches(owner, repo));
+    return this.analysisOutputs.filter((analysisOutput) => analysisMatches(analysisOutput, owner, repo));
   }
 
   async listAllAnalysisFromOwner(owner: string): Promise<AnalysisOutput[]> {
-    return this.analysisOutputs.filter((analysisOutput) => analysisOutput.matches(owner));
+    return this.analysisOutputs.filter((analysisOutput) => analysisMatches(analysisOutput, owner));
   }
 }
 
