@@ -1,0 +1,27 @@
+[
+  {
+    "repository": "repo1",
+    "owner": "owner1",
+    "pull_number": 1,
+    "results": [
+      {
+        "className": "main.Main",
+        "method": "main()",
+        "analysis": {
+          "confluenceIntra": "error",
+          "confluenceInter": "error",
+          "leftRightOAIntra": "false",
+          "rightLeftOAIntra": "false",
+          "leftRightOAInter": "true",
+          "rightLeftOAInter": "true",
+          "leftRightPdgSdg": "error",
+          "rightLeftPdgSdg": "error",
+          "leftRightDfpInter": "error",
+          "rightLeftDfpInter": "error",
+          "leftRightPdgSdge": "error",
+          "rightLeftPdgSdge": "error"
+        }
+      }
+    ]
+  }
+]
