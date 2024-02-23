@@ -40,14 +40,19 @@ class AnalysisOutput implements IAnalysisOutput {
     this.pull_number = analysisOutput.pull_number;
     this.results = analysisOutput.results;
   }
-
-  matches(owner: string, repo?: string, pull_number?: number): boolean {
-    return this.owner === owner && repo
-      ? this.repository === repo
-      : true && pull_number
-      ? this.pull_number === pull_number
-      : true;
-  }
 }
 
-export { IAnalysisOutput, AnalysisOutput };
+function analysisMatches(
+  analysis: AnalysisOutput,
+  owner: string,
+  repo?: string,
+  pull_number?: number
+): boolean {
+  return (
+    analysis.owner === owner &&
+    (repo ? analysis.repository === repo : true) &&
+    (pull_number ? analysis.pull_number === pull_number : true)
+  );
+}
+
+export { IAnalysisOutput, AnalysisOutput, analysisMatches };
