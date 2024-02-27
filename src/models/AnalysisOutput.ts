@@ -15,10 +15,21 @@ type analysisResultList = {
   rightLeftPdgSdge: analysisResult;
 };
 
-type result = {
+type codeLine = {
   className: string;
   method: string;
+  lineNumber: number;
+};
+
+type dependency = {
+  from: codeLine;
+  to: codeLine;
+  stackTrace?: codeLine[];
+};
+
+type result = {
   analysis: analysisResultList;
+  dependencies: dependency[];
 };
 
 interface IAnalysisOutput {

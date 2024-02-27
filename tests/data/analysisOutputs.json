@@ -5,8 +5,6 @@
     "pull_number": 1,
     "results": [
       {
-        "className": "main.Main",
-        "method": "main()",
         "analysis": {
           "confluenceIntra": "error",
           "confluenceInter": "error",
@@ -20,7 +18,17 @@
           "rightLeftDfpInter": "error",
           "leftRightPdgSdge": "error",
           "rightLeftPdgSdge": "error"
-        }
+        },
+        "dependencies": [
+          {
+            "from": { "className": "main.Main", "method": "main()", "lineNumber": 15 },
+            "to": { "className": "main.Main", "method": "main()", "lineNumber": 34 },
+            "stackTrace": [
+              { "className": "main.Main", "method": "main()", "lineNumber": 34 },
+              { "className": "main.Main", "method": "main()", "lineNumber": 15 }
+            ]
+          }
+        ]
       }
     ]
   }
