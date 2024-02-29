@@ -3,12 +3,17 @@ import fs from "fs";
 import app from "../src/routes/app";
 import { AnalysisOutput } from "../src/models/AnalysisOutput";
 
-const analysisExample: AnalysisOutput[] = JSON.parse(
-  fs.readFileSync("tests/data/analysisOutputs.json", "utf8")
-);
+const dataFile = "src/data/analysisOutputs.json";
+let analysisExample: AnalysisOutput[] = JSON.parse(fs.readFileSync(dataFile, "utf8"));
+
+const owner = "spgroup";
+const repo = "conflict-static-analysis";
+const pull_number = 80;
 
 describe("/analysis route", () => {
-  beforeEach(() => {}); // TODO database connection goes here
+  beforeEach(() => {
+    analysisExample = JSON.parse(fs.readFileSync(dataFile, "utf8"));
+  }); // TODO database connection goes here
   afterEach(() => {}); // TODO database disconnetion goes here
 
   // GET tests
@@ -20,7 +25,7 @@ describe("/analysis route", () => {
 
   test("GET: should return 200 OK and the requested Analysis", () => {
     return request(app)
-      .get("/analysis?owner=owner1&repo=repo1&pull_number=1")
+      .get(`/analysis?owner=${owner}&repo=${repo}&pull_number=${pull_number}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
 
@@ -31,7 +36,7 @@ describe("/analysis route", () => {
 
   test("GET: should return 200 OK and all Analysis from a repo", () => {
     return request(app)
-      .get("/analysis?owner=owner1&repo=repo1")
+      .get(`/analysis?owner=${owner}&repo=${repo}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
 
@@ -42,7 +47,7 @@ describe("/analysis route", () => {
 
   test("GET: should return 200 OK and all Analysis from an owner", () => {
     return request(app)
-      .get("/analysis?owner=owner1")
+      .get(`/analysis?owner=${owner}`)
       .then((response) => {
         expect(response.statusCode).toBe(200);
 
@@ -98,17 +103,17 @@ describe("/analysis route", () => {
 
   test("DELETE: should return 200 OK", () => {
     return request(app)
-      .delete("/analysis?owner=owner1&repo=repo1&pull_number=1")
+      .delete(`/analysis?owner=${owner}&repo=${repo}&pull_number=${pull_number}`)
       .then((response) => expect(response.statusCode).toBe(200));
   });
 
   test("DELETE: analysis list should be empty", () => {
     request(app)
-      .delete("/analysis?owner=owner1&repo=repo1&pull_number=1")
+      .delete(`/analysis?owner=${owner}&repo=${repo}&pull_number=${pull_number}`)
       .then((response) => expect(response.statusCode).toBe(200))
       .then(() => {
         return request(app)
-          .get("/analysis?owner=owner1")
+          .get(`/analysis?owner=${owner}`)
           .then((response) => {
             expect(response.statusCode).toBe(200);
 
