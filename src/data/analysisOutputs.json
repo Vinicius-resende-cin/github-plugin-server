@@ -1,8 +1,8 @@
 [
   {
-    "repository": "repo1",
-    "owner": "owner1",
-    "pull_number": 1,
+    "repository": "conflict-static-analysis",
+    "owner": "spgroup",
+    "pull_number": 80,
     "results": [
       {
         "analysis": {
@@ -21,11 +21,19 @@
         },
         "dependencies": [
           {
-            "from": { "className": "main.Main", "method": "main()", "lineNumber": 15 },
-            "to": { "className": "main.Main", "method": "main()", "lineNumber": 34 },
+            "from": {
+              "className": "br.unb.cic.analysis.AbstractMergeConflictDefinition",
+              "method": "main()",
+              "lineNumber": 106
+            },
+            "to": { "className": "br.unb.cic.analysis.Main", "method": "main()", "lineNumber": 304 },
             "stackTrace": [
-              { "className": "main.Main", "method": "main()", "lineNumber": 34 },
-              { "className": "main.Main", "method": "main()", "lineNumber": 15 }
+              { "className": "br.unb.cic.analysis.Main", "method": "main()", "lineNumber": 304 },
+              {
+                "className": "br.unb.cic.analysis.AbstractMergeConflictDefinition",
+                "method": "main()",
+                "lineNumber": 106
+              }
             ]
           }
         ]
