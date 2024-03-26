@@ -16,6 +16,25 @@ describe("/analysis route", () => {
   }); // TODO database connection goes here
   afterEach(() => {}); // TODO database disconnetion goes here
 
+  // POST tests
+  test("POST: should return 400 Bad Request", () => {
+    return request(app)
+      .post("/analysis")
+      .then((response) => expect(response.statusCode).toBe(400));
+  });
+
+  test("POST: should return 200 OK and the created Analysis", () => {
+    return request(app)
+      .post("/analysis")
+      .send({ analysis: analysisExample[0] })
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
+
+        const analysis: AnalysisOutput = JSON.parse(response.text);
+        expect(analysis).toEqual(analysisExample[0]);
+      });
+  });
+
   // GET tests
   test("GET: should return 400 Bad Request", () => {
     return request(app)
@@ -56,25 +75,6 @@ describe("/analysis route", () => {
       });
   });
 
-  // POST tests
-  test("POST: should return 400 Bad Request", () => {
-    return request(app)
-      .post("/analysis")
-      .then((response) => expect(response.statusCode).toBe(400));
-  });
-
-  test("POST: should return 200 OK and the created Analysis", () => {
-    return request(app)
-      .post("/analysis")
-      .send({ analysis: analysisExample[0] })
-      .then((response) => {
-        expect(response.statusCode).toBe(200);
-
-        const analysis: AnalysisOutput = JSON.parse(response.text);
-        expect(analysis).toEqual(analysisExample[0]);
-      });
-  });
-
   // PUT tests
   test("PUT: should return 400 Bad Request", () => {
     return request(app)
@@ -108,7 +108,7 @@ describe("/analysis route", () => {
   });
 
   test("DELETE: analysis list should be empty", () => {
-    request(app)
+    return request(app)
       .delete(`/analysis?owner=${owner}&repo=${repo}&pull_number=${pull_number}`)
       .then((response) => expect(response.statusCode).toBe(200))
       .then(() => {
