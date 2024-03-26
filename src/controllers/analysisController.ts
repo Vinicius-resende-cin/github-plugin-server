@@ -1,10 +1,16 @@
-import { persistencePath, persistenceType } from "../config";
-import { AnalysisOutputFileRepository, AnalysisOutputRepository } from "../data/AnalysisOutputRepository";
+import { persistencePath, persistenceType, collectionName } from "../config";
+import {
+  AnalysisOutputFileRepository,
+  AnalysisOutputMongoRepository,
+  AnalysisOutputRepository
+} from "../data/AnalysisOutputRepository";
 import { AnalysisOutput, IAnalysisOutput } from "../models/AnalysisOutput";
 
-const analysisOutputRepository: AnalysisOutputRepository =
+let analysisOutputRepository: AnalysisOutputRepository =
   persistenceType === "file"
     ? new AnalysisOutputFileRepository(persistencePath)
+    : persistenceType === "mongo"
+    ? new AnalysisOutputMongoRepository(collectionName)
     : new AnalysisOutputFileRepository(persistencePath);
 
 interface IAnalysisController {
