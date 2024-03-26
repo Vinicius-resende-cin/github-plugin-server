@@ -7,4 +7,8 @@ const serverPort = process.env.SERVER_PORT || 4000;
 const persistenceType = process.env.PERSISTENCE_TYPE || "file";
 const persistencePath = process.env.PERSISTENCE_PATH || "src/data/analysisOutputs.json";
 
-export { serverPort, persistenceType, persistencePath };
+// Database configuration
+const connectionString = process.env.ATLAS_URI || "";
+const collectionName = "analysis";
+
+export { serverPort, persistenceType, persistencePath, connectionString, collectionName };
