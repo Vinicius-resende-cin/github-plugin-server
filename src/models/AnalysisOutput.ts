@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 type analysisResult = "true" | "false" | "error";
 
 type analysisResultList = {
@@ -65,5 +67,52 @@ function analysisMatches(
     (pull_number ? analysis.pull_number === pull_number : true)
   );
 }
+
+const analysisSchema = new mongoose.Schema({
+  repository: String,
+  owner: String,
+  pull_number: Number,
+  results: [
+    {
+      analysis: {
+        confluenceIntra: String,
+        confluenceInter: String,
+        leftRightOAIntra: String,
+        rightLeftOAIntra: String,
+        leftRightOAInter: String,
+        rightLeftOAInter: String,
+        leftRightPdgSdg: String,
+        rightLeftPdgSdg: String,
+        leftRightDfpInter: String,
+        rightLeftDfpInter: String,
+        leftRightPdgSdge: String,
+        rightLeftPdgSdge: String
+      },
+      dependencies: [
+        {
+          from: {
+            className: String,
+            method: String,
+            lineNumber: Number
+          },
+          to: {
+            className: String,
+            method: String,
+            lineNumber: Number
+          },
+          stackTrace: [
+            {
+              className: String,
+              method: String,
+              lineNumber: Number
+            }
+          ]
+        }
+      ]
+    }
+  ]
+});
+
+export default mongoose.models.Analysis || mongoose.model("Analysis", analysisSchema);
 
 export { IAnalysisOutput, AnalysisOutput, analysisMatches };
