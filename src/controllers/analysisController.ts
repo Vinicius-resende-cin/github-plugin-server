@@ -10,7 +10,7 @@ let analysisOutputRepository: AnalysisOutputRepository =
   persistenceType === "file"
     ? new AnalysisOutputFileRepository(persistencePath)
     : persistenceType === "mongo"
-    ? new AnalysisOutputMongoRepository(collectionName)
+    ? new AnalysisOutputMongoRepository()
     : new AnalysisOutputFileRepository(persistencePath);
 
 interface IAnalysisController {

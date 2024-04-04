@@ -1,7 +1,6 @@
 import fs from "fs";
-import { client as mongoClient, connectDb } from "../database";
+import AnalysisModel from "../models/AnalysisOutput";
 import { AnalysisOutput, analysisMatches } from "../models/AnalysisOutput";
-import { Db } from "mongodb";
 
 interface AnalysisOutputRepository {
   getAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<AnalysisOutput | null>;
@@ -75,97 +74,53 @@ class AnalysisOutputFileRepository implements AnalysisOutputRepository {
 }
 
 class AnalysisOutputMongoRepository implements AnalysisOutputRepository {
-  private db: Db | undefined;
-  private collectionName: string;
-
-  constructor(collectionName: string) {
-    this.collectionName = collectionName;
-  }
-
-  private async connect() {
-    this.db = await connectDb("AnalysisOutputMongoRepository");
-  }
-
-  private async disconnect() {
-    await mongoClient.close();
-  }
+  private db = AnalysisModel;
 
   async getAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<AnalysisOutput | null> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
+    const analysis = await this.db.findOne<AnalysisOutput>(
+      { repository: repo, owner, pull_number },
+      { projection: { _id: 0 } }
+    );
 
-    const result = await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .findOne<AnalysisOutput>({ repository: repo, owner, pull_number }, { projection: { _id: 0 } });
-
-    await this.disconnect();
-    return result;
+    if (!analysis) throw new Error("Analysis output not found");
+    console.log("Found: ", analysis);
+    return analysis;
   }
 
   async createAnalysisOutput(analysisOutput: AnalysisOutput): Promise<AnalysisOutput> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
-    console.log(analysisOutput);
+    await this.db.create<AnalysisOutput>(analysisOutput);
 
-    const { repository, owner, pull_number } = analysisOutput;
-    const a = await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .updateOne({ repository, owner, pull_number }, { $set: analysisOutput }, { upsert: true });
-
-    console.log(a.acknowledged);
-
-    await this.disconnect();
+    console.log("Created: ", analysisOutput);
     return analysisOutput;
   }
 
   async updateAnalysisOutput(newAnalysisOutput: AnalysisOutput): Promise<AnalysisOutput> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
-
     const { repository, owner, pull_number } = newAnalysisOutput;
-    await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .updateOne({ repository, owner, pull_number }, { $set: newAnalysisOutput });
+    const a = await this.db.updateOne({ repository, owner, pull_number }, { $set: newAnalysisOutput });
 
-    await this.disconnect();
+    if (!a.acknowledged) throw new Error("Failed to update analysis output");
+    console.log("Updated: ", newAnalysisOutput);
     return newAnalysisOutput;
   }
 
   async deleteAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<void> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
-
-    await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .deleteOne({ repository: repo, owner, pull_number });
-
-    await this.disconnect();
+    await this.db.deleteOne({ repository: repo, owner, pull_number });
+    console.log("Deleted: ", { repository: repo, owner, pull_number });
   }
 
   async listAllAnalysisFromRepo(repo: string, owner: string): Promise<AnalysisOutput[]> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
-
-    const result = await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .find({ repository: repo, owner }, { projection: { _id: 0 } })
-      .toArray();
-
-    await this.disconnect();
-    return result;
+    const analyses = await this.db.find<AnalysisOutput>(
+      { repository: repo, owner },
+      { projection: { _id: 0 } }
+    );
+    console.log("Found: ", analyses);
+    return analyses;
   }
 
   async listAllAnalysisFromOwner(owner: string): Promise<AnalysisOutput[]> {
-    await this.connect();
-    if (!this.db) throw new Error("Database not connected");
-
-    const result = await this.db
-      .collection<AnalysisOutput>(this.collectionName)
-      .find({ owner }, { projection: { _id: 0 } })
-      .toArray();
-
-    await this.disconnect();
-    return result;
+    const analyses = await this.db.find<AnalysisOutput>({ owner }, { projection: { _id: 0 } });
+    console.log("Found: ", analyses);
+    return analyses;
   }
 }
 
