@@ -1,6 +1,5 @@
-import fs from "fs";
 import AnalysisModel from "../models/AnalysisOutput";
-import { AnalysisOutput, analysisMatches } from "../models/AnalysisOutput";
+import { AnalysisOutput } from "../models/AnalysisOutput";
 
 interface AnalysisOutputRepository {
   getAnalysisOutput(repo: string, owner: string, pull_number: number): Promise<AnalysisOutput | null>;
@@ -10,6 +9,8 @@ interface AnalysisOutputRepository {
   listAllAnalysisFromRepo(repo: string, owner: string): Promise<AnalysisOutput[]>;
   listAllAnalysisFromOwner(owner: string): Promise<AnalysisOutput[]>;
 }
+
+/* FileRepository deprecated in favor of MongoDB
 
 class AnalysisOutputFileRepository implements AnalysisOutputRepository {
   private analysisOutputs: AnalysisOutput[];
@@ -72,6 +73,7 @@ class AnalysisOutputFileRepository implements AnalysisOutputRepository {
     return this.analysisOutputs.filter((analysisOutput) => analysisMatches(analysisOutput, owner));
   }
 }
+*/
 
 class AnalysisOutputMongoRepository implements AnalysisOutputRepository {
   private db = AnalysisModel;
@@ -124,4 +126,4 @@ class AnalysisOutputMongoRepository implements AnalysisOutputRepository {
   }
 }
 
-export { AnalysisOutputRepository, AnalysisOutputFileRepository, AnalysisOutputMongoRepository };
+export { AnalysisOutputRepository, AnalysisOutputMongoRepository };

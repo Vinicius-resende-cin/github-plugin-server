@@ -1,17 +1,9 @@
-import { persistencePath, persistenceType, collectionName } from "../config";
-import {
-  AnalysisOutputFileRepository,
-  AnalysisOutputMongoRepository,
-  AnalysisOutputRepository
-} from "../data/AnalysisOutputRepository";
+import { persistenceType } from "../config";
+import { AnalysisOutputMongoRepository, AnalysisOutputRepository } from "../data/AnalysisOutputRepository";
 import { AnalysisOutput, IAnalysisOutput } from "../models/AnalysisOutput";
 
 let analysisOutputRepository: AnalysisOutputRepository =
-  persistenceType === "file"
-    ? new AnalysisOutputFileRepository(persistencePath)
-    : persistenceType === "mongo"
-    ? new AnalysisOutputMongoRepository()
-    : new AnalysisOutputFileRepository(persistencePath);
+  persistenceType === "mongo" ? new AnalysisOutputMongoRepository() : new AnalysisOutputMongoRepository();
 
 interface IAnalysisController {
   getAnalysis: (repo: string, owner: string, pull_number: number) => Promise<AnalysisOutput | null>;
