@@ -1,43 +1,40 @@
-[
-  {
-    "repository": "conflict-static-analysis",
-    "owner": "spgroup",
-    "pull_number": 80,
-    "results": [
-      {
-        "analysis": {
-          "confluenceIntra": "error",
-          "confluenceInter": "error",
-          "leftRightOAIntra": "false",
-          "rightLeftOAIntra": "false",
-          "leftRightOAInter": "true",
-          "rightLeftOAInter": "true",
-          "leftRightPdgSdg": "error",
-          "rightLeftPdgSdg": "error",
-          "leftRightDfpInter": "error",
-          "rightLeftDfpInter": "error",
-          "leftRightPdgSdge": "error",
-          "rightLeftPdgSdge": "error"
-        },
-        "dependencies": [
+{
+  "uuid": "661579e387487aec69fb6a4a",
+  "repository": "semantic-conflict",
+  "owner": "Vinicius-resende-cin",
+  "pull_number": 59,
+  "data": {},
+  "events": [
+    {
+      "type": "leftRightOAIntra",
+      "label": "at samples.OverrideAssignmentVariable.conflict(OverrideAssignmentVariable.java:9)",
+      "body": {
+        "description": "OA conflict",
+        "interference": [
           {
-            "from": {
-              "className": "br.unb.cic.analysis.AbstractMergeConflictDefinition",
-              "method": "main()",
-              "lineNumber": 106
-            },
-            "to": { "className": "br.unb.cic.analysis.Main", "method": "main()", "lineNumber": 304 },
-            "stackTrace": [
-              { "className": "br.unb.cic.analysis.Main", "method": "main()", "lineNumber": 304 },
-              {
-                "className": "br.unb.cic.analysis.AbstractMergeConflictDefinition",
-                "method": "main()",
-                "lineNumber": 106
-              }
-            ]
+            "type": "declaration",
+            "branch": "L",
+            "text": "int x = 1;",
+            "location": {
+              "file": "src/main/java/samples/OverrideAssignmentVariable.java",
+              "class": "samples.OverrideAssignmentVariable",
+              "method": "conflict",
+              "line": 5
+            }
+          },
+          {
+            "type": "override",
+            "branch": "R",
+            "text": "x = 2;",
+            "location": {
+              "file": "src/main/java/samples/OverrideAssignmentVariable.java",
+              "class": "samples.OverrideAssignmentVariable",
+              "method": "conflict",
+              "line": 9
+            }
           }
         ]
       }
-    ]
-  }
-]
+    }
+  ]
+}
