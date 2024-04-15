@@ -1,60 +1,83 @@
 import mongoose from "mongoose";
 
-type analysisResult = "true" | "false" | "error";
+// Define the types of nodes for each analysis
 
-type analysisResultList = {
-  confluenceIntra: analysisResult;
-  confluenceInter: analysisResult;
-  leftRightOAIntra: analysisResult;
-  rightLeftOAIntra: analysisResult;
-  leftRightOAInter: analysisResult;
-  rightLeftOAInter: analysisResult;
-  leftRightPdgSdg: analysisResult;
-  rightLeftPdgSdg: analysisResult;
-  leftRightDfpInter: analysisResult;
-  rightLeftDfpInter: analysisResult;
-  leftRightPdgSdge: analysisResult;
-  rightLeftPdgSdge: analysisResult;
+type interferenceTypeList = {
+  OA: {
+    DECLARATION: "declaration";
+    OVERRIDE: "override";
+  };
+  DEFAULT: {
+    SOURCE: "source";
+    SINK: "sink";
+  };
 };
 
-type codeLine = {
-  className: string;
+type Flatten<T> = T extends object ? T[keyof T] : T;
+
+type interferenceType = Flatten<Flatten<interferenceTypeList>>;
+
+// Define the types of the analysis output
+
+type lineLocation = {
+  file: string;
+  class: string;
   method: string;
-  lineNumber: number;
+  line: number;
 };
 
-type dependency = {
-  from: codeLine;
-  to: codeLine;
-  stackTrace?: codeLine[];
-};
-
-type result = {
-  analysis: analysisResultList;
-  dependencies: dependency[];
+type interferenceNode = {
+  type: interferenceType;
+  branch: "L" | "R";
+  text: string;
+  location: lineLocation;
+  stackTrace?: Array<lineLocation>;
 };
 
 interface IAnalysisOutput {
+  uuid: string;
   repository: string;
   owner: string;
   pull_number: number;
-  results: result[];
+  data: {
+    [key: string]: any;
+  };
+  events: Array<{
+    type: string;
+    label: string;
+    body: {
+      description: string;
+      interference: Array<interferenceNode>;
+    };
+  }>;
 }
 
 class AnalysisOutput implements IAnalysisOutput {
   repository: string;
   owner: string;
   pull_number: number;
-  results: result[];
+  uuid: string;
+  data: { [key: string]: any };
+  events: Array<{
+    type: string;
+    label: string;
+    body: {
+      description: string;
+      interference: Array<interferenceNode>;
+    };
+  }>;
 
   constructor(analysisOutput: IAnalysisOutput) {
+    this.uuid = analysisOutput.uuid;
     this.repository = analysisOutput.repository;
     this.owner = analysisOutput.owner;
     this.pull_number = analysisOutput.pull_number;
-    this.results = analysisOutput.results;
+    this.data = analysisOutput.data;
+    this.events = analysisOutput.events;
   }
 }
 
+/* FileRepository deprecated in favor of MongoDB
 function analysisMatches(
   analysis: AnalysisOutput,
   owner: string,
@@ -67,52 +90,51 @@ function analysisMatches(
     (pull_number ? analysis.pull_number === pull_number : true)
   );
 }
+*/
+
+// Define the schema for the analysis output
 
 const analysisSchema = new mongoose.Schema({
+  uuid: String,
   repository: String,
   owner: String,
   pull_number: Number,
-  results: [
-    {
-      analysis: {
-        confluenceIntra: String,
-        confluenceInter: String,
-        leftRightOAIntra: String,
-        rightLeftOAIntra: String,
-        leftRightOAInter: String,
-        rightLeftOAInter: String,
-        leftRightPdgSdg: String,
-        rightLeftPdgSdg: String,
-        leftRightDfpInter: String,
-        rightLeftDfpInter: String,
-        leftRightPdgSdge: String,
-        rightLeftPdgSdge: String
-      },
-      dependencies: [
-        {
-          from: {
-            className: String,
-            method: String,
-            lineNumber: Number
-          },
-          to: {
-            className: String,
-            method: String,
-            lineNumber: Number
-          },
-          stackTrace: [
+  data: Object,
+  events: {
+    type: [
+      {
+        type: String,
+        label: String,
+        body: {
+          description: String,
+          interference: [
             {
-              className: String,
-              method: String,
-              lineNumber: Number
+              type: String,
+              branch: String,
+              text: String,
+              location: {
+                file: String,
+                class: String,
+                method: String,
+                line: Number
+              },
+              stackTrace: [
+                {
+                  file: String,
+                  class: String,
+                  method: String,
+                  line: Number
+                }
+              ]
             }
           ]
         }
-      ]
-    }
-  ]
+      }
+    ],
+    default: []
+  }
 });
 
 export default mongoose.models.Analysis || mongoose.model("Analysis", analysisSchema);
 
-export { IAnalysisOutput, AnalysisOutput, analysisMatches };
+export { IAnalysisOutput, AnalysisOutput };
