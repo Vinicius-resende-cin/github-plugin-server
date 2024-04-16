@@ -103,13 +103,13 @@ const analysisSchema = new mongoose.Schema({
   events: {
     type: [
       {
-        type: String,
+        type: { type: String },
         label: String,
         body: {
           description: String,
           interference: [
             {
-              type: String,
+              type: { type: String },
               branch: String,
               text: String,
               location: {
