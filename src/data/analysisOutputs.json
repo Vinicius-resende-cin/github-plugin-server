@@ -1,40 +1,43 @@
-{
-  "uuid": "661579e387487aec69fb6a4a",
-  "repository": "semantic-conflict",
-  "owner": "Vinicius-resende-cin",
-  "pull_number": 59,
-  "data": {},
-  "events": [
-    {
-      "type": "leftRightOAIntra",
-      "label": "at samples.OverrideAssignmentVariable.conflict(OverrideAssignmentVariable.java:9)",
-      "body": {
-        "description": "OA conflict",
-        "interference": [
-          {
-            "type": "declaration",
-            "branch": "L",
-            "text": "int x = 1;",
-            "location": {
-              "file": "src/main/java/samples/OverrideAssignmentVariable.java",
-              "class": "samples.OverrideAssignmentVariable",
-              "method": "conflict",
-              "line": 5
+[
+  {
+    "uuid": "661579e387487aec69fb6a4a",
+    "repository": "semantic-conflict",
+    "owner": "Vinicius-resende-cin",
+    "pull_number": 59,
+    "data": { "option": "someOption" },
+    "diff": "",
+    "events": [
+      {
+        "type": "leftRightOAIntra",
+        "label": "at samples.OverrideAssignmentVariable.conflict(OverrideAssignmentVariable.java:9)",
+        "body": {
+          "description": "OA conflict",
+          "interference": [
+            {
+              "type": "declaration",
+              "branch": "L",
+              "text": "int x = 1;",
+              "location": {
+                "file": "src/main/java/samples/OverrideAssignmentVariable.java",
+                "class": "samples.OverrideAssignmentVariable",
+                "method": "conflict",
+                "line": 5
+              }
+            },
+            {
+              "type": "override",
+              "branch": "R",
+              "text": "x = 2;",
+              "location": {
+                "file": "src/main/java/samples/OverrideAssignmentVariable.java",
+                "class": "samples.OverrideAssignmentVariable",
+                "method": "conflict",
+                "line": 9
+              }
             }
-          },
-          {
-            "type": "override",
-            "branch": "R",
-            "text": "x = 2;",
-            "location": {
-              "file": "src/main/java/samples/OverrideAssignmentVariable.java",
-              "class": "samples.OverrideAssignmentVariable",
-              "method": "conflict",
-              "line": 9
-            }
-          }
-        ]
+          ]
+        }
       }
-    }
-  ]
-}
+    ]
+  }
+]

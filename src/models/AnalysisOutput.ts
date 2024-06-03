@@ -42,6 +42,7 @@ interface IAnalysisOutput {
   data: {
     [key: string]: any;
   };
+  diff: string;
   events: Array<{
     type: string;
     label: string;
@@ -58,6 +59,7 @@ class AnalysisOutput implements IAnalysisOutput {
   pull_number: number;
   uuid: string;
   data: { [key: string]: any };
+  diff: string;
   events: Array<{
     type: string;
     label: string;
@@ -73,6 +75,7 @@ class AnalysisOutput implements IAnalysisOutput {
     this.owner = analysisOutput.owner;
     this.pull_number = analysisOutput.pull_number;
     this.data = analysisOutput.data;
+    this.diff = analysisOutput.diff;
     this.events = analysisOutput.events;
   }
 }
@@ -100,6 +103,7 @@ const analysisSchema = new mongoose.Schema({
   owner: String,
   pull_number: Number,
   data: Object,
+  diff: String,
   events: {
     type: [
       {

@@ -6,17 +6,17 @@ import { AnalysisOutput } from "../src/models/AnalysisOutput";
 const dataFile = "src/data/analysisOutputs.json";
 let analysisExample: AnalysisOutput[] = JSON.parse(fs.readFileSync(dataFile, "utf8"));
 
-const owner = "spgroup";
-const repo = "conflict-static-analysis";
-const pull_number = 80;
+const owner = "Vinicius-resende-cin";
+const repo = "semantic-conflict";
+const pull_number = 59;
 
 const TIMEOUT = 60000;
 
 describe("/analysis route", () => {
   beforeEach(() => {
     analysisExample = JSON.parse(fs.readFileSync(dataFile, "utf8"));
-  }); // TODO database connection goes here
-  afterEach(() => {}); // TODO database disconnetion goes here
+  });
+  afterEach(() => {});
 
   // POST tests
   test(
