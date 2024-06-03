@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import AnalysisController from "../controllers/analysisController";
 import { IAnalysisOutput } from "../models/AnalysisOutput";
 import mongoose from "mongoose";
@@ -17,6 +18,7 @@ const analysisController = new AnalysisController();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/analysis", async (req, res) => {
   const owner = req.query.owner as string;
