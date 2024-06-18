@@ -31,7 +31,7 @@ type interferenceNode = {
   branch: "L" | "R";
   text: string;
   location: lineLocation;
-  stackTrace?: Array<lineLocation>;
+  stackTrace?: Array<string>;
 };
 
 interface IAnalysisOutput {
@@ -122,14 +122,7 @@ const analysisSchema = new mongoose.Schema({
                 method: String,
                 line: Number
               },
-              stackTrace: [
-                {
-                  file: String,
-                  class: String,
-                  method: String,
-                  line: Number
-                }
-              ]
+              stackTrace: [String]
             }
           ]
         }
