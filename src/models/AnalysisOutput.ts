@@ -26,12 +26,18 @@ type lineLocation = {
   line: number;
 };
 
+type tracedNode = {
+  class: string;
+  method: string;
+  line: number;
+};
+
 type interferenceNode = {
   type: interferenceType;
   branch: "L" | "R";
   text: string;
   location: lineLocation;
-  stackTrace?: Array<string>;
+  stackTrace?: Array<tracedNode>;
 };
 
 interface IAnalysisOutput {
@@ -122,7 +128,13 @@ const analysisSchema = new mongoose.Schema({
                 method: String,
                 line: Number
               },
-              stackTrace: [String]
+              stackTrace: [
+                {
+                  class: String,
+                  method: String,
+                  line: Number
+                }
+              ]
             }
           ]
         }
