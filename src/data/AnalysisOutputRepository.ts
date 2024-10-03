@@ -90,7 +90,17 @@ class AnalysisOutputMongoRepository implements AnalysisOutputRepository {
   }
 
   async createAnalysisOutput(analysisOutput: AnalysisOutput): Promise<AnalysisOutput> {
-    await this.db.create<AnalysisOutput>(analysisOutput);
+    const analysisExists = await this.db.exists({
+      repository: analysisOutput.repository,
+      owner: analysisOutput.owner,
+      pull_number: analysisOutput.pull_number
+    });
+
+    if (analysisExists) {
+      return await this.updateAnalysisOutput(analysisOutput);
+    } else {
+      await this.db.create<AnalysisOutput>(analysisOutput);
+    }
 
     console.log("Created: ", analysisOutput);
     return analysisOutput;
