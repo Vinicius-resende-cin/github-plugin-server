@@ -4,6 +4,10 @@ import AnalysisController from "../controllers/analysisController";
 import { IAnalysisOutput } from "../models/AnalysisOutput";
 import mongoose from "mongoose";
 import { connectionString } from "../config";
+import SettingsController from "../controllers/settingsController";
+import { IASettingsData } from "../models/SettingsData";
+import SettingsModel from "../models/SettingsData";
+
 
 // Database connection
 mongoose.connect(connectionString, {
@@ -15,6 +19,7 @@ db.on("error", (err) => console.log(err));
 db.once("connected", () => console.log("Connected to database"));
 
 const analysisController = new AnalysisController();
+const settingsController = new SettingsController();
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -101,6 +106,62 @@ app.delete("/analysis", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).send("Analysis not found");
+  }
+});
+
+// GET: Search Settings
+app.get("/settings", async (req, res) => {
+
+  const owner = req.query.owner as string;
+  const repo = req.query.repo as string;
+  const pull_number = req.query.pull_number as string;
+
+  try {
+    const existingSettings = await SettingsModel.findOne({ owner, repo, pull_number });
+    if (existingSettings) {
+      res.status(200).json(existingSettings);
+    } else {
+      res.status(404).send("Settings not found.");
+      }
+  } catch (error) {
+      console.log(error);
+      return res.status(404).send("Settings not found");
+    }
+});
+
+// POST: Create new settings
+app.post("/settings", async (req, res) => {
+  if (!req.body.settings) return res.status(400).send("Bad request: settings not provided");
+
+  const settings: IASettingsData = req.body.settings;
+
+  try {
+    const createdSettings = await settingsController
+      .createSettings(settings)
+      .then((settings) => JSON.stringify(settings));
+
+    res.send(createdSettings);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Settings not created");
+  }
+});
+
+// PUT: Update settings
+app.put("/settings", async (req, res) => {
+  if (!req.body.settings) return res.status(400).send("Bad request: settings not provided");
+
+  const settings: IASettingsData = req.body.settings;
+
+  try {
+    const updatedSettings = await settingsController
+      .updateSettings(settings)
+      .then((settings) => JSON.stringify(settings));
+
+    res.send(updatedSettings);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send("Settings not updated");
   }
 });
 
