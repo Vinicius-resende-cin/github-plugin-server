@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { connectionString } from "../config";
 import SettingsController from "../controllers/settingsController";
 import { IASettingsData } from "../models/SettingsData";
+import SettingsModel from "../models/SettingsData";
 
 
 // Database connection
@@ -110,33 +111,22 @@ app.delete("/analysis", async (req, res) => {
 
 // GET: Search Settings
 app.get("/settings", async (req, res) => {
+
   const owner = req.query.owner as string;
   const repo = req.query.repo as string;
   const pull_number = req.query.pull_number as string;
 
-  if (!owner) return res.status(400).send("Bad request: owner not provided");
-  if (pull_number && !repo) return res.status(400).send("Bad request: repo not provided");
-
   try {
-    let settings: string;
-    if (owner && repo && pull_number) {
-      settings = await settingsController
-        .getSettings(repo, owner, parseInt(pull_number))
-        .then((settings) => JSON.stringify(settings));
-    } else if (owner && repo) {
-      settings = await settingsController
-        .getAllSettingsFromRepo(repo, owner)
-        .then((settings) => JSON.stringify(settings));
+    const existingSettings = await SettingsModel.findOne({ owner, repo, pull_number });
+    if (existingSettings) {
+      res.status(200).json(existingSettings);
     } else {
-      settings = await settingsController
-        .getAllSettingsFromOwner(owner)
-        .then((settings) => JSON.stringify(settings));
-    }
-    return res.send(settings);
+      res.status(404).send("Settings not found.");
+      }
   } catch (error) {
-    console.log(error);
-    return res.status(404).send("Settings not found");
-  }
+      console.log(error);
+      return res.status(404).send("Settings not found");
+    }
 });
 
 // POST: Create new settings
@@ -172,27 +162,6 @@ app.put("/settings", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).send("Settings not updated");
-  }
-});
-
-// DELETE: Remove Settigns
-app.delete("/settings", async (req, res) => {
-  const owner = req.query.owner as string;
-  const repo = req.query.repo as string;
-  const pull_number = req.query.pull_number as string;
-
-  if (!owner) return res.status(400).send("Bad request: owner not provided");
-  if (pull_number && !repo) return res.status(400).send("Bad request: repo not provided");
-
-  try {
-    await settingsController
-      .deleteSettings(repo, owner, parseInt(pull_number))
-      .then((settings) => JSON.stringify(settings));
-
-    return res.send();
-  } catch (error) {
-    console.log(error);
-    return res.status(404).send("Settings not found");
   }
 });
 
