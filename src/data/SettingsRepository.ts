@@ -35,7 +35,13 @@ class SettingsDataMongoRepository implements SettingsDataRepository {
 
   async updateSettingsData(newSettingsData: SettingsData): Promise<SettingsData> {
     const { repository, owner, pull_number } = newSettingsData;
-    const a = await this.db.updateOne({ repository, owner, pull_number }, { $set: newSettingsData });
+
+    let a;
+    if (newSettingsData.baseClass) {
+      a = await this.db.updateOne({ repository, owner, pull_number }, { $set: newSettingsData });
+    } else {
+      a = await this.db.updateOne({ repository, owner, pull_number }, { $set: newSettingsData, $unset: { baseClass: "" } });
+    }
 
     if (!a.acknowledged) throw new Error("Failed to update settings");
     console.log("Updated: ", newSettingsData);
