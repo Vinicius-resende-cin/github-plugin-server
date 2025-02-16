@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 import { model } from "mongoose";
-
 
 interface IASettingsData {
   uuid: string;
   repository: string;
   owner: string;
   pull_number: number;
-  baseClass: String;
+  mainClass: String;
   mainMethod: String;
+  baseClass?: String;
 }
 
 class SettingsData implements IASettingsData {
@@ -16,49 +16,59 @@ class SettingsData implements IASettingsData {
   repository: string;
   owner: string;
   pull_number: number;
-  baseClass: String;
+  mainClass: String;
   mainMethod: String;
+  baseClass?: String;
 
   constructor(settings: IASettingsData) {
     this.uuid = settings.uuid;
     this.repository = settings.repository;
     this.owner = settings.owner;
     this.pull_number = settings.pull_number;
-    this.baseClass = settings.baseClass;
+    this.mainClass = settings.mainClass;
     this.mainMethod = settings.mainMethod;
+    this.baseClass = settings.baseClass;
   }
 }
 
-const settingsSchema = new mongoose.Schema({
-  uuid: String,
-  owner: {
-    type: String,
-    required: true,
-    trim: true,
+const settingsSchema = new mongoose.Schema(
+  {
+    uuid: String,
+    owner: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    repository: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    pull_number: {
+      type: Number,
+      required: true,
+      trim: true
+    },
+    mainClass: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    mainMethod: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    baseClass: {
+      type: String,
+      required: false,
+      trim: true
+    }
   },
-  repository: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  pull_number: {
-    type: Number,
-    required: true,
-    trim: true
-  },
-  baseClass: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  mainMethod: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true
+  }
+);
 
 const SettingsModel = model<SettingsData>("Settings", settingsSchema);
 

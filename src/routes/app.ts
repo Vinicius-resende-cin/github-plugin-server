@@ -6,7 +6,6 @@ import { IAnalysisOutput } from "../models/AnalysisOutput";
 import { connectionString } from "../config";
 import SettingsController from "../controllers/settingsController";
 import { IASettingsData } from "../models/SettingsData";
-import SettingsModel from "../models/SettingsData";
 import { IRegisteredRepo } from "../models/RegisteredRepo";
 import RepoModel from "../models/RegisteredRepo";
 
@@ -114,22 +113,23 @@ app.delete("/analysis", async (req, res) => {
 
 // GET: Search Settings
 app.get("/settings", async (req, res) => {
-
   const owner = req.query.owner as string;
   const repo = req.query.repo as string;
   const pull_number = req.query.pull_number as string;
 
   try {
-    const existingSettings = await SettingsModel.findOne({ owner, repo, pull_number });
+    const existingSettings = await settingsController.getSettings(repo, owner, parseInt(pull_number));
     if (existingSettings) {
       res.status(200).json(existingSettings);
+      console.log(`Found settings for ${owner}/${repo}#${pull_number}`);
     } else {
+      console.log(`Settings not found for ${owner}/${repo}#${pull_number}`);
       res.status(404).send("Settings not found.");
-      }
-  } catch (error) {
-      console.log(error);
-      return res.status(404).send("Settings not found");
     }
+  } catch (error) {
+    console.log(error);
+    return res.status(404).send("Settings not found");
+  }
 });
 
 // POST: Create new settings
